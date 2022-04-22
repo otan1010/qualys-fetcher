@@ -10,8 +10,6 @@ def main():
     
     log = logging.getLogger(__name__)       #Get logger for use in local function 
 
-    log.info(f"logging from {__name__}")
-
     method1()
 
 if __name__ == "__main__":

@@ -4,7 +4,9 @@ import yaml
 import json
 import sys
 
-log = logging.getLogger(__name__)
+from pythonjsonlogger import jsonlogger
+
+LOG = logging.getLogger(__name__)
 
 def set_logging():
 
@@ -22,9 +24,11 @@ def set_logging():
                                                                 interval=interval,
                                                                 backupCount=count)
 
+    formatter = jsonlogger.JsonFormatter(default_format)
+    default_handler.setFormatter(formatter)
+
     logging.basicConfig(level=level,
-                        handlers=[default_handler],
-                        format=default_format)
+                        handlers=[default_handler])
 
 def get_configuration():
 
@@ -51,6 +55,6 @@ def get_configuration():
         sys.exit()
 
     else:
-        log.debug(f"Loaded {path} successfully.")
+        LOG.debug(f"Loaded {path} successfully.")
 
     return configuration

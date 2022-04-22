@@ -1,5 +1,6 @@
 logging:
-  default_format: '{ "time": "%(asctime)s", "logger": "%(name)s", "funcname": "%(funcName)s", "level": "%(levelname)s", "msg": "%(message)s" }'
+  default_format: "%(asctime)s %(name)s %(funcName)s %(levelname)s %(message)s"
+  #default_format: '{ "time": "%(asctime)s", "logger": "%(name)s", "funcname": "%(funcName)s", "level": "%(levelname)s", "msg": "%(message)s" }'
   level: "DEBUG"
   file_out: "app.log"
   unit: "S"
