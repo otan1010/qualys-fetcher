@@ -1,0 +1,20 @@
+logging:
+  default_format: '{ "time": "%(asctime)s", "logger": "%(name)s", "funcname": "%(funcName)s", "level": "%(levelname)s", "msg": "%(message)s" }'
+  level: "DEBUG"
+  file_out: "app.log"
+  unit: "S"
+  count: 5
+  interval: 60
+
+endpoints:
+  detections:
+    endpoint: "/vm/detections/"
+    params: 
+      one: 4
+      two: "hello"
+      heyhey: 89
+      something: True
+  
+  audit:
+    endpoint: "/audit/"
+    params: "set=45"
