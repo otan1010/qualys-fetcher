@@ -1,18 +1,17 @@
-import logging
-import logging.handlers
 import yaml
 import json
 import sys
 
-from pythonjsonlogger import jsonlogger
+import logging
+import logging.handlers
 
-LOG = logging.getLogger(__name__)
+from pythonjsonlogger import jsonlogger
 
 def set_logging():
 
     conf = get_configuration().get("logging")
 
-    default_format = conf.get("default_format")
+    fields = conf.get("fields")
     level = conf.get("level")
     file_out = conf.get("file_out")
     unit = conf.get("unit")
@@ -24,7 +23,8 @@ def set_logging():
                                                                 interval=interval,
                                                                 backupCount=count)
 
-    formatter = jsonlogger.JsonFormatter(default_format)
+    formatter = jsonlogger.JsonFormatter(fields)
+
     default_handler.setFormatter(formatter)
 
     logging.basicConfig(level=level,
@@ -34,27 +34,7 @@ def get_configuration():
 
     path = 'config.yml'
 
-    try:
-        with open(path, 'r') as file:
-            configuration = yaml.safe_load(file)
-
-    except FileNotFoundError:
-        print(f"File {path} not found!")
-        sys.exit()
-
-    except PermissionError:
-        print(f"Insufficient permission to read {path}!")
-        sys.exit()
-
-    except IsADirectoryError:
-        print(f"{path} is a directory!")
-        sys.exit()
-
-    except yaml.scanner.ScannerError as e:
-        print(f"Unable to parse {path}: {e}")
-        sys.exit()
-
-    else:
-        LOG.debug(f"Loaded {path} successfully.")
+    with open(path, 'r') as file:
+        configuration = yaml.safe_load(file)
 
     return configuration

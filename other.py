@@ -2,7 +2,9 @@ import logging
 
 from static import get_configuration
 
-log = logging.getLogger(__name__)
+conf = get_configuration()
+LOG = logging.getLogger(__name__)
 
 def method1():
-    log.info("TESTINGGGGGGGGGGGGG")
+    LOG.info("TESTINGGGGGGGGGGGGG")
+    print(conf)

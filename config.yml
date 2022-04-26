@@ -1,21 +1,77 @@
 logging:
-  default_format: "%(asctime)s %(name)s %(funcName)s %(levelname)s %(message)s"
-  #default_format: '{ "time": "%(asctime)s", "logger": "%(name)s", "funcname": "%(funcName)s", "level": "%(levelname)s", "msg": "%(message)s" }'
+  fields: "%(asctime)s %(name)s %(funcName)s %(levelname)s %(message)s"
   level: "DEBUG"
   file_out: "app.log"
   unit: "S"
   count: 5
   interval: 60
 
+api:
+  url_domain: "https://qualysapi.qualys.eu"
+  url_path: "/api/2.0/fo"
+
 endpoints:
-  detections:
-    endpoint: "/vm/detections/"
+
+  default:
+    action: "list"
+    truncation_limit: 10000
+
+  asset:
+    endpoint: "/asset/host/"
     params: 
-      one: 4
-      two: "hello"
-      heyhey: 89
-      something: True
-  
-  audit:
-    endpoint: "/audit/"
-    params: "set=45"
+      action: "list"
+      truncation_limit: 40000
+      show_asset_id: 1
+      details: "All/AGs"
+      show_tags: 1
+
+  asset_group:
+    endpoint: "/asset/group/"
+    params: 
+      action: "list"
+      truncation_limit: 40000
+      show_attributes: "ALL"
+
+  knowledgebase:
+    endpoint: "/knowledge_base/vuln/"
+    params: 
+      action: "list"
+      details: "All"
+
+  activity_log:
+    endpoint: "/activity_log/"
+    params: 
+      action: "list"
+      truncation_limit: 40000
+
+  detection:
+    endpoint: "/asset/host/vm/detections/"
+    params: 
+      active: 
+        action: "list"
+        #Truncation limit here refers to number of assets, not number of detections
+        truncation_limit: 3000
+        show_asset_id: 1
+        show_results: 1
+        status: "Active,New,Re-Opened"
+        include_ignored: 1
+        include_disabled: 1
+        arf_service_filter: 0
+        arf_config_filter: 0
+        arf_kernel_filter: 0
+        show_reopened_info: 1
+        show_igs: 1
+      fixed: 
+        action: "list"
+        #Truncation limit here refers to number of assets, not number of detections
+        truncation_limit: 3000
+        show_asset_id: 1
+        show_results: 1
+        status: "Fixed"
+        include_ignored: 1
+        include_disabled: 1
+        arf_service_filter: 0
+        arf_config_filter: 0
+        arf_kernel_filter: 0
+        show_reopened_info: 1
+        show_igs: 1
