@@ -1,6 +1,6 @@
 logging:
   fields: "%(asctime)s %(name)s %(funcName)s %(levelname)s %(message)s"
-  level: "DEBUG"
+  level: "debug"
   file_out: "app.log"
   unit: "S"
   count: 5
@@ -11,10 +11,6 @@ api:
   url_path: "/api/2.0/fo"
 
 endpoints:
-
-  default:
-    action: "list"
-    truncation_limit: 10000
 
   asset:
     endpoint: "/asset/host/"

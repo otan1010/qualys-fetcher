@@ -12,7 +12,7 @@ def set_logging():
     conf = get_configuration().get("logging")
 
     fields = conf.get("fields")
-    level = conf.get("level")
+    level = conf.get("level").upper()
     file_out = conf.get("file_out")
     unit = conf.get("unit")
     count = conf.get("count")
