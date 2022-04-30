@@ -13,7 +13,7 @@ def main():
 
     conf = Configuration("activity_log")
 
-    conf.get_dynamic()
+    print(conf.get_dynamic_params())
 
 if __name__ == "__main__":
     main()

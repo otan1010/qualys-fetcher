@@ -44,17 +44,21 @@ endpoints:
         truncation_limit: 40000
       dynamic:
         since_datetime:
-          type: "timestamp"
+          param_type: "timestamp"
+          format: "%Y-%m-%dT%H:%M:%SZ"
           subtract:
-            Hour: 1
+            hours: 1
           replace:
-            Second: 0
-            Minute: 0
+            minute: 0
+            second: 0
+            microsecond: 0
         until_datetime:
-          type: "timestamp"
+          param_type: "timestamp"
+          format: "%Y-%m-%dT%H:%M:%SZ"
           replace:
-            Second: 0
-            Minute: 0
+            minute: 0
+            second: 0
+            microsecond: 0
 
   detection:
     endpoint: "/asset/host/vm/detections/"
@@ -81,16 +85,12 @@ endpoints:
         status: "Fixed"
       dynamic: 
         detection_updated_since:
-          type: "timestamp"
+          param_type: "timestamp"
+          format: "%Y-%m-%dT%H:%M:%SZ"
           subtract:
-            Days: 1
+            days: 1
           replace:
-            Hour: 0
-            Minute: 0
-            Second: 0
-        until_datetime:
-          type: "timestamp"
-          replace:
-            Second: 0
-            Minute: 0
-
+            hour: 0
+            minute: 0
+            second: 0
+            microsecond: 0
