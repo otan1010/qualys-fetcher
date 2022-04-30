@@ -10,10 +10,13 @@ set_logging()   #Set basic config and rotation handler
 LOG = logging.getLogger(__name__)   #Get logger for use locally
 
 def main():
+    get_from_api("activity_log")
 
-    conf = Configuration("activity_log")
+    #conf = Configuration()
 
-    print(conf.get_dynamic_params())
+    #print(conf.get_endpoint("activity_log"))
+    #print(conf.get_static_params())
+    #print(conf.get_logging())
 
 if __name__ == "__main__":
     main()

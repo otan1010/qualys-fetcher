@@ -1,14 +1,12 @@
-import yaml
-import json
 from datetime import datetime, timedelta
+
+import yaml
 
 class Configuration():
 
-    def __init__(self, endpoint=None):
+    def __init__(self):
         with open('configuration.yml', 'r') as file:
             self.configuration = yaml.safe_load(file)
-
-        self.endpoint = endpoint
 
     def __repr__(self):
         return "Configuration(endpoint=None)"
@@ -19,12 +17,22 @@ class Configuration():
     def get_logging(self):
         return self.configuration.get("logging")
 
-    def get_static_params(self):
-        return self.configuration.get("endpoints").get(self.endpoint).get("params").get("static")
+    def get_endpoint(self, endpoint):
+        dynamic = self.get_dynamic_params(endpoint)
+        static = self.get_static_params(endpoint)
+        api = self.get_api()
 
-    def get_dynamic_params(self):
-        params = self.configuration.get("endpoints").get(self.endpoint).get("params").get("dynamic")
-        
+        return {**static, **dynamic, **api}
+
+    def get_api(self):
+        return self.configuration.get("api")
+
+    def get_static_params(self, endpoint):
+        return self.configuration.get("endpoints").get(endpoint).get("params").get("static")
+
+    def get_dynamic_params(self, endpoint):
+        params = self.configuration.get("endpoints").get(endpoint).get("params").get("dynamic")
+
         results = {}
 
         for param in params:
