@@ -1,0 +1,96 @@
+logging:
+  fields: "%(asctime)s %(name)s %(funcName)s %(levelname)s %(message)s"
+  level: "debug"
+  file_out: "app.log"
+  unit: "S"
+  count: 5
+  interval: 60
+
+api:
+  url_domain: "https://qualysapi.qualys.eu"
+  url_path: "/api/2.0/fo"
+
+endpoints:
+  asset:
+    endpoint: "/asset/host/"
+    params: 
+      static:
+        action: "list"
+        truncation_limit: 40000
+        show_asset_id: 1
+        details: "All/AGs"
+        show_tags: 1
+
+  asset_group:
+    endpoint: "/asset/group/"
+    params: 
+      static:
+        action: "list"
+        truncation_limit: 40000
+        show_attributes: "ALL"
+
+  knowledgebase:
+    endpoint: "/knowledge_base/vuln/"
+    params: 
+      static:
+        action: "list"
+        details: "All"
+
+  activity_log:
+    endpoint: "/activity_log/"
+    params: 
+      static:
+        action: "list"
+        truncation_limit: 40000
+      dynamic:
+        since_datetime:
+          type: "timestamp"
+          subtract:
+            Hour: 1
+          replace:
+            Second: 0
+            Minute: 0
+        until_datetime:
+          type: "timestamp"
+          replace:
+            Second: 0
+            Minute: 0
+
+  detection:
+    endpoint: "/asset/host/vm/detections/"
+    params: 
+      static:
+        action: "list"
+        #Truncation limit here refers to number of assets, not number of detections
+        truncation_limit: 3000
+        show_asset_id: 1
+        show_results: 1
+        status: "Active,New,Re-Opened"
+        include_ignored: 1
+        include_disabled: 1
+        arf_service_filter: 0
+        arf_config_filter: 0
+        arf_kernel_filter: 0
+        show_reopened_info: 1
+        show_igs: 1
+
+  detection_fixed: 
+    endpoint: "/asset/host/vm/detections/"
+    params: 
+      static:
+        status: "Fixed"
+      dynamic: 
+        detection_updated_since:
+          type: "timestamp"
+          subtract:
+            Days: 1
+          replace:
+            Hour: 0
+            Minute: 0
+            Second: 0
+        until_datetime:
+          type: "timestamp"
+          replace:
+            Second: 0
+            Minute: 0
+

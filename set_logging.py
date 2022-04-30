@@ -1,15 +1,13 @@
-import yaml
-import json
-import sys
-
 import logging
 import logging.handlers
 
 from pythonjsonlogger import jsonlogger
 
+from configuration import Configuration
+
 def set_logging():
 
-    conf = get_configuration().get("logging")
+    conf = Configuration().get_logging()
 
     fields = conf.get("fields")
     level = conf.get("level").upper()
@@ -29,12 +27,3 @@ def set_logging():
 
     logging.basicConfig(level=level,
                         handlers=[default_handler])
-
-def get_configuration():
-
-    path = 'config.yml'
-
-    with open(path, 'r') as file:
-        configuration = yaml.safe_load(file)
-
-    return configuration

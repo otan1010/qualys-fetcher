@@ -1,12 +1,13 @@
 import logging
+import json
 
 import requests
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
 
-from static import get_configuration
+#from static import get_configuration
 
-conf = get_configuration()
+#conf = get_configuration()
 LOG = logging.getLogger(__name__)
 
 def get_from_api():
@@ -24,7 +25,7 @@ def get_from_api():
     http.mount("http://", adapter)
 
     try:
-        r = http.get('https://httpbin.org/delay/3', timeout=2)
+        r = http.get('https://httpbin.org/delay/1', timeout=2)
     except requests.exceptions.ConnectionError as e:
         LOG.warning(e)
 
