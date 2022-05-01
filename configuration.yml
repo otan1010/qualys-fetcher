@@ -6,9 +6,9 @@ logging:
   count: 5
   interval: 60
 
-api:
-  url_domain: "https://qualysapi.qualys.eu"
-  url_path: "/api/2.0/fo"
+url:
+  domain: "https://qualysapi.qualys.eu"
+  path: "/api/2.0/fo"
 
 endpoints:
   asset:

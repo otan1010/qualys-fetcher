@@ -1,7 +1,7 @@
 import logging
 
 from set_logging import set_logging
-from api import get_from_api
+from qualysfetcher import QualysFetcher
 
 from configuration import Configuration
 
@@ -10,9 +10,9 @@ set_logging()   #Set basic config and rotation handler
 LOG = logging.getLogger(__name__)   #Get logger for use locally
 
 def main():
-    print(get_from_api("detection_fixed"))
+    #print(QualysFetcher().get("detection_fixed"))
 
-    #conf = Configuration()
+    print(Configuration().url)
 
     #print(conf.get_endpoint("activity_log"))
     #print(conf.get_static_params())

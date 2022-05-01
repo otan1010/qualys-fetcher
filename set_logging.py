@@ -7,7 +7,8 @@ from configuration import Configuration
 
 def set_logging():
 
-    conf = Configuration().get_logging()
+#    conf = Configuration().get_logging()
+    conf = Configuration().logging
 
     fields = conf.get("fields")
     level = conf.get("level").upper()
