@@ -10,7 +10,7 @@ set_logging()   #Set basic config and rotation handler
 LOG = logging.getLogger(__name__)   #Get logger for use locally
 
 def main():
-    get_from_api("activity_log")
+    print(get_from_api("detection_fixed"))
 
     #conf = Configuration()
 

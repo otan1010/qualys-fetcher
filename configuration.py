@@ -52,11 +52,12 @@ class Configuration():
                 if p_replace:
                     now = now.replace(**p_replace)
 
-                now = now.strftime(p_format)
+                if p_format:
+                    now = now.strftime(p_format)
 
                 results[param] = now
 
-            elif p_type == "list":
-                pass
+#            elif p_type == "list":
+#                pass
 
         return results

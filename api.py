@@ -11,6 +11,7 @@ LOG = logging.getLogger(__name__)
 def get_from_api(endpoint):
 
     conf = Configuration().get_endpoint(endpoint)
+    print(conf)
 
     retry_strategy = Retry(
         total=2,
