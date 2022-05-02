@@ -6,9 +6,11 @@ logging:
   count: 5
   interval: 60
 
-url:
+request:
   domain: "https://qualysapi.qualys.eu"
   path: "/api/2.0/fo"
+  headers:
+    X-Requested-With: "qualys-fetcher"
 
 endpoints:
   asset:

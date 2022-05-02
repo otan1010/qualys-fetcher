@@ -4,34 +4,45 @@ import yaml
 
 class Configuration():
 
-    def __init__(self, file_path="configuration.yml"):
-        with open(file_path, "r") as file:
+    def __init__(self, file_path="configuration.yml", credentials="credentials.yml"):
+        self.credentials = credentials
+        self.file_path = file_path
+
+        with open(self.credentials, "r") as file:
+            self.credentials = yaml.safe_load(file)
+
+        with open(self.file_path, "r") as file:
             self.all = yaml.safe_load(file)
 
-        self.url = self.all.get("url")
+        self.request = self.all.get("request")
         self.logging = self.all.get("logging")
         self.endpoints = self.all.get("endpoints")
 
     def __repr__(self):
-        return "Configuration()"
+        return f"Configuration(file_path={self.file_path})"
 
     def __str__(self):
         return str(self.all)
 
     def get_endpoint(self, endpoint):
+        headers = self.get_headers()
         dynamic = self.get_dynamic_params(endpoint)
         static = self.get_static_params(endpoint)
-        url = self.get_url()
+        url = self.get_url(endpoint)
 
-        return { "params": { **static, **dynamic }, "url": url }
+        return { "params": { **static, **dynamic }, "url": url, "headers": headers }
 
-    def get_url(self):
-        domain = self.url.get("domain")
-        path = self.url.get("path")
+    def get_url(self, endpoint):
+        endpoint = self.endpoints.get(endpoint).get("endpoint")
+        domain = self.request.get("domain")
+        path = self.request.get("path")
 
-        url = domain + path
+        url = domain + path + endpoint
 
         return url
+
+    def get_headers(self):
+        return self.request.get("headers")
 
     def get_static_params(self, endpoint):
         params = self.endpoints.get(endpoint).get("params").get("static")

@@ -12,7 +12,8 @@ LOG = logging.getLogger(__name__)   #Get logger for use locally
 def main():
     #print(QualysFetcher().get("detection_fixed"))
 
-    print(Configuration().url)
+    print(Configuration().credentials)
+    print(Configuration().get_endpoint("activity_log"))
 
     #print(conf.get_endpoint("activity_log"))
     #print(conf.get_static_params())
