@@ -10,13 +10,12 @@ LOG = logging.getLogger(__name__)
 
 class QualysFetcher():
 
+    #def __init__(self, endpoint):
     def __init__(self):
-        print("heyhey")
+        pass
+    #    self.endpoint = endpoint
 
-    def get(self, endpoint):
-
-        conf = Configuration().get_endpoint(endpoint)
-
+    def get_session_obj(self):
         retry_strategy = Retry(
             total=2,
             status_forcelist=[429, 500, 502, 503, 504],
@@ -25,13 +24,22 @@ class QualysFetcher():
 
         adapter = HTTPAdapter(max_retries=retry_strategy)
 
-        http = requests.Session()
-        http.mount("https://", adapter)
-        http.mount("http://", adapter)
+        session = requests.Session()
+        session.mount("https://", adapter)
+        session.mount("http://", adapter)
+
+        return session
+
+    #def get(self, endpoint):
+    def get(self):
+
+        #conf = Configuration().get_endpoint(endpoint)
+        session = self.get_session_obj()
 
         try:
-            request = http.get('https://httpbin.org/delay/1', timeout=2)
-            print(request)
+            request = session.get('https://httpbin.org/delay/3', timeout=4)
+            #request = session.get('https://httpbin.org/delay/3', timeout=2)
+            return request
         except requests.exceptions.ConnectionError as err:
             LOG.warning(err)
 

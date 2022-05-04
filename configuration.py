@@ -4,11 +4,11 @@ import yaml
 
 class Configuration():
 
-    def __init__(self, file_path="configuration.yml", credentials="credentials.yml"):
-        self.credentials = credentials
+    def __init__(self, file_path="configuration.yml", cred_path="credentials.yml"):
+        self.cred_path = cred_path
         self.file_path = file_path
 
-        with open(self.credentials, "r") as file:
+        with open(self.cred_path, "r") as file:
             self.credentials = yaml.safe_load(file)
 
         with open(self.file_path, "r") as file:
@@ -19,7 +19,7 @@ class Configuration():
         self.endpoints = self.all.get("endpoints")
 
     def __repr__(self):
-        return f"Configuration(file_path={self.file_path})"
+        return f"Configuration(file_path={self.file_path}, credentials={self.cred_path})"
 
     def __str__(self):
         return str(self.all)
@@ -81,4 +81,6 @@ class Configuration():
 
                 results[param] = p_now
 
+        #If format is not specified this will return datetime object,
+        #else formatted date string
         return results
