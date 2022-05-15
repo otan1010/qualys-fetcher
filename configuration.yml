@@ -54,7 +54,6 @@ endpoints:
     params: 
       static:
         action: "list"
-        #ids: "100027,10005,100067,100076,100089"
         details: "All"
 
   activity_log:
@@ -97,8 +96,7 @@ endpoints:
     params: 
       static:
         action: "list"
-        #Truncation limit here refers to number of assets, not number of detections
-        truncation_limit: 1000
+        truncation_limit: 1000 #Truncation limit here refers to number of assets, not number of detections
         show_asset_id: 1
         show_results: 1
         status: "Active,New,Re-Opened"
@@ -118,12 +116,10 @@ endpoints:
       day: "*/1"
     options:
       write_to: "detections_fixed.json"
-      batch_by: "truncation"
     params: 
       static:
         action: "list"
-        #Truncation limit here refers to number of assets, not number of detections
-        truncation_limit: 1000
+        truncation_limit: 1000 #Truncation limit here refers to number of assets, not number of detections
         show_asset_id: 1
         show_results: 1
         status: "Fixed"
