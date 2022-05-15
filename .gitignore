@@ -1,6 +1,7 @@
 app.log*
 credentials.yml
 data/*.json
+logs/*.log
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
