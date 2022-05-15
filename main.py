@@ -16,14 +16,10 @@ def main():
         
     schedules = Configuration().get_schedules()
 
-    for key, values in schedules.items():
-        scheduler.add_job(fetch, 'cron', [key], **values)
-
-    scheduler.print_jobs()
+    for key, value in schedules.items():
+        scheduler.add_job(fetch, 'cron', [key], **value)
 
     scheduler.start()
-
-    #fetch("asset_group")
 
 if __name__ == "__main__":
     main()
