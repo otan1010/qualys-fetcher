@@ -1,7 +1,7 @@
 logging:
   fields: "%(asctime)s %(name)s %(funcName)s %(levelname)s %(message)s"
   level: "debug"
-  file_out: "app.log"
+  file_out: "logs/qualysfetcher.log"
   unit: "H"
   count: 7
   interval: 24
@@ -17,11 +17,10 @@ endpoints:
     endpoint: "/asset/host/"
     options:
       write_to: "assets.json"
-      batch_by: "truncation"
     params: 
       static:
         action: "list"
-        truncation_limit: 40000
+        truncation_limit: 5000
         show_asset_id: 1
         details: "All/AGs"
         show_tags: 1
@@ -30,36 +29,30 @@ endpoints:
     endpoint: "/asset/group/"
     options:
       write_to: "asset_groups.json"
-      batch_by: "truncation"
     params: 
       static:
         action: "list"
-        truncation_limit: 100
+        truncation_limit: 5000
         show_attributes: "ALL"
 
   knowledgebase:
     endpoint: "/knowledge_base/vuln/"
     options:
       write_to: "knowledgebase.json"
-      batch_by: "list"
-      list_field: "QID"
-      list_param: "qids"
-      list_from: [ "detection", "detection_fixed" ]
     params: 
       static:
         action: "list"
-        ids: "100027,10005,100067,100076,100089"
+        #ids: "100027,10005,100067,100076,100089"
         details: "All"
 
   activity_log:
     endpoint: "/activity_log/"
     options:
       write_to: "activity_log.json"
-      batch_by: "truncation"
     params: 
       static:
         action: "list"
-        truncation_limit: 4000
+        truncation_limit: 5000
       dynamic:
         since_datetime:
           param_type: "timestamp"
@@ -82,12 +75,11 @@ endpoints:
     endpoint: "/asset/host/vm/detection/"
     options:
       write_to: "detections.json"
-      batch_by: "truncation"
     params: 
       static:
         action: "list"
         #Truncation limit here refers to number of assets, not number of detections
-        truncation_limit: 10
+        truncation_limit: 1000
         show_asset_id: 1
         show_results: 1
         status: "Active,New,Re-Opened"
@@ -118,7 +110,7 @@ endpoints:
         arf_config_filter: 0
         arf_kernel_filter: 0
         show_reopened_info: 1
-        show_igs: 1
+        #show_igs: 1
       dynamic: 
         detection_updated_since:
           param_type: "timestamp"
@@ -130,8 +122,9 @@ endpoints:
             minute: 0
             second: 0
             microsecond: 0
-        last_fixed:
+        detection_updated_before:
           param_type: "timestamp"
+          format: "%Y-%m-%dT%H:%M:%SZ"
           replace:
             hour: 0
             minute: 0
