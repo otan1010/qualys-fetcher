@@ -25,6 +25,14 @@ class Configuration():
     def __str__(self):
         return str(self.all)
 
+    def get_schedules(self):
+        results = {}
+
+        for key, value in self.endpoints.items():
+            results[key] = value.get("schedule")
+
+        return results
+
     def get_endpoint(self, endpoint):
         headers = self.get_headers()
         dynamic = self.get_dynamic_params(endpoint)

@@ -15,6 +15,10 @@ request:
 endpoints:
   asset:
     endpoint: "/asset/host/"
+    schedule:
+      minute: "35"
+      hour: "0"
+      day: "*/1"
     options:
       write_to: "assets.json"
     params: 
@@ -27,6 +31,10 @@ endpoints:
 
   asset_group:
     endpoint: "/asset/group/"
+    schedule:
+      minute: "30"
+      hour: "0"
+      day: "*/1"
     options:
       write_to: "asset_groups.json"
     params: 
@@ -37,6 +45,10 @@ endpoints:
 
   knowledgebase:
     endpoint: "/knowledge_base/vuln/"
+    schedule:
+      minute: "40"
+      hour: "0"
+      day: "*/1"
     options:
       write_to: "knowledgebase.json"
     params: 
@@ -47,6 +59,9 @@ endpoints:
 
   activity_log:
     endpoint: "/activity_log/"
+    schedule:
+      minute: "1"
+      hour: "*/1"
     options:
       write_to: "activity_log.json"
     params: 
@@ -73,6 +88,10 @@ endpoints:
 
   detection:
     endpoint: "/asset/host/vm/detection/"
+    schedule:
+      minute: "5"
+      hour: "0"
+      day: "*/1"
     options:
       write_to: "detections.json"
     params: 
@@ -93,6 +112,10 @@ endpoints:
 
   detection_fixed: 
     endpoint: "/asset/host/vm/detection/"
+    schedule:
+      minute: "1"
+      hour: "0"
+      day: "*/1"
     options:
       write_to: "detections_fixed.json"
       batch_by: "truncation"
