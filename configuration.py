@@ -17,6 +17,7 @@ class Configuration():
         self.request = self.all.get("request")
         self.logging = self.all.get("logging")
         self.endpoints = self.all.get("endpoints")
+        self.options = self.all.get("options")
 
     def __repr__(self):
         return f"Configuration(file_path={self.file_path}, credentials={self.cred_path})"
@@ -29,13 +30,15 @@ class Configuration():
         dynamic = self.get_dynamic_params(endpoint)
         static = self.get_static_params(endpoint)
         url = self.get_url(endpoint)
+        options = self.get_options(endpoint)
+        creds = self.credentials
 
-        return { "params": { **static, **dynamic }, "url": url, "headers": headers }
+        return { "params": { **static, **dynamic }, "url": url, "headers": headers, "credentials": creds, "options": options }
 
     def get_url(self, endpoint):
-        endpoint = self.endpoints.get(endpoint).get("endpoint")
         domain = self.request.get("domain")
         path = self.request.get("path")
+        endpoint = self.endpoints.get(endpoint).get("endpoint")
 
         url = domain + path + endpoint
 
@@ -43,6 +46,11 @@ class Configuration():
 
     def get_headers(self):
         return self.request.get("headers")
+
+    def get_options(self, endpoint):
+        options = self.endpoints.get(endpoint).get("options")
+
+        return options
 
     def get_static_params(self, endpoint):
         params = self.endpoints.get(endpoint).get("params").get("static")
@@ -60,26 +68,27 @@ class Configuration():
         results = {}
         now = datetime.utcnow()
 
-        for param in params:
+        if params:
+            for param in params:
 
-            p_now = now
-            p_type = params.get(param).get("param_type")
-            p_format = params.get(param).get("format")
-            p_subtract = params.get(param).get("subtract")
-            p_replace = params.get(param).get("replace")
+                p_now = now
+                p_type = params.get(param).get("param_type")
+                p_format = params.get(param).get("format")
+                p_subtract = params.get(param).get("subtract")
+                p_replace = params.get(param).get("replace")
 
-            if p_type == "timestamp":
+                if p_type == "timestamp":
 
-                if p_subtract:
-                    p_now = p_now - timedelta(**p_subtract)
+                    if p_subtract:
+                        p_now = p_now - timedelta(**p_subtract)
 
-                if p_replace:
-                    p_now = p_now.replace(**p_replace)
+                    if p_replace:
+                        p_now = p_now.replace(**p_replace)
 
-                if p_format:
-                    p_now = p_now.strftime(p_format)
+                    if p_format:
+                        p_now = p_now.strftime(p_format)
 
-                results[param] = p_now
+                    results[param] = p_now
 
         #If format is not specified this will return datetime object,
         #else formatted date string

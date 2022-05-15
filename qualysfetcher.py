@@ -1,49 +1,64 @@
 import logging
 
 import requests
+from requests.auth import HTTPBasicAuth
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
 
 from configuration import Configuration
+from api import get_session
 
 LOG = logging.getLogger(__name__)
 
-class QualysFetcher():
+def fetch(endpoint):
+    conf = Configuration().get_endpoint(endpoint)
+    session = get_session(endpoint)
 
-    #def __init__(self, endpoint):
-    def __init__(self):
-        pass
-    #    self.endpoint = endpoint
+    write_to = conf.get("options").get("write_to")
+    batch_by = conf.get("options").get("batch_by")
+    list_field = conf.get("options").get("list_field")
+    list_param = conf.get("options").get("list_param")
+    list_from = conf.get("options").get("list_from")
 
-    def get_session_obj(self):
-        retry_strategy = Retry(
-            total=2,
-            status_forcelist=[429, 500, 502, 503, 504],
-            method_whitelist=["HEAD", "GET", "OPTIONS"]
-            )
+    truncation = 1
 
-        adapter = HTTPAdapter(max_retries=retry_strategy)
+    while truncation:
+        response = session.get(url, headers=headers, params=params, auth=HTTPBasicAuth(username, password))
+        content = response.content
 
-        session = requests.Session()
-        session.mount("https://", adapter)
-        session.mount("http://", adapter)
+        for item in parse_data(content, 'detections'):
+            log_data.critical(item)
 
-        return session
+        new_id = get_truncation_id(content, 'detections')
 
-    #def get(self, endpoint):
-    def get(self):
+        if new_id:
+            params['id_min'] = new_id
+        else:
+            truncation = 0
 
-        #conf = Configuration().get_endpoint(endpoint)
-        session = self.get_session_obj()
-
-        try:
-            request = session.get('https://httpbin.org/delay/3', timeout=4)
-            #request = session.get('https://httpbin.org/delay/3', timeout=2)
-            return request
-        except requests.exceptions.ConnectionError as err:
-            LOG.warning(err)
-
-        #if r.ok:
-        #    print("ok", r.status_code)
-        #else:
-        #    print(r.status_code)
+#    for req in get_next(session, batch_by):
+#        data = parse_output(req)
+#        write_data(data)
+#
+#def get_next(session, batch_by):
+#
+#    if batch_by == "truncation":
+#        truncation = 1
+#
+#        while truncation:
+#            #response = session.get()
+#            #content = response.content
+#            truncation = 0
+#
+##            for item in parse_data(content, 'detections'):
+##                log_data.critical(item)
+##
+##            new_id = get_truncation_id(content, 'detections')
+##
+##            if new_id:
+##                params['id_min'] = new_id
+##            else:
+##                truncation = 0
+#
+#    elif batch_by == "list":
+#        pass

@@ -1,7 +1,8 @@
 import logging
+import json
 
 from set_logging import set_logging
-from qualysfetcher import QualysFetcher
+from qualysfetcher import fetch
 
 from configuration import Configuration
 
@@ -11,11 +12,21 @@ LOG = logging.getLogger(__name__)   #Get logger for use locally
 
 def main():
 
-    got = QualysFetcher().get()
+    QualysFetcher().fetch("knowledgebase")
+    #got1 = QualysFetcher("detection_fixed")
+    #got1 = QualysFetcher("activity_log")
 
-    print(got.text)
-    print(got.headers)
-    print(got.url)
+    #print(json.dumps(got1.conf, indent=2, default=str))
+    #print()
+
+    #got2 = got1.run_endpoint()
+
+    #print(got2.text)
+    #print("status_code: ", got2.status_code)
+    #print()
+    #print("headers: ", got2.headers)
+    #print()
+    #print("url: ", got2.url)
 
 if __name__ == "__main__":
     main()
