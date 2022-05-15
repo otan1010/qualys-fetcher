@@ -43,7 +43,6 @@ def fetch(endpoint):
             new_query = parse_qs(new_url_p.query)
             new_id = new_query.get("id_min")
             new_id = new_id[0]
-            print(new_id)
         except Exception as err:
             new_id = None
             LOG.debug(err)
