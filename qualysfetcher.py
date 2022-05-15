@@ -1,9 +1,16 @@
 import logging
+import re
+import json
 
 import requests
 from requests.auth import HTTPBasicAuth
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
+
+from urllib.parse import urlparse,parse_qs
+from bs4 import BeautifulSoup as bs
+
+import xmltodict
 
 from configuration import Configuration
 from api import get_session
@@ -15,50 +22,83 @@ def fetch(endpoint):
     session = get_session(endpoint)
 
     write_to = conf.get("options").get("write_to")
-    batch_by = conf.get("options").get("batch_by")
-    list_field = conf.get("options").get("list_field")
-    list_param = conf.get("options").get("list_param")
-    list_from = conf.get("options").get("list_from")
+    url = conf.get("url")
+    headers = conf.get("headers")
+    params = conf.get("params")
+    username = conf.get("credentials").get("username")
+    password = conf.get("credentials").get("password")
 
     truncation = 1
-
     while truncation:
         response = session.get(url, headers=headers, params=params, auth=HTTPBasicAuth(username, password))
-        content = response.content
+        text = response.text
 
-        for item in parse_data(content, 'detections'):
-            log_data.critical(item)
+        bs_content = bs(text, features="xml")
 
-        new_id = get_truncation_id(content, 'detections')
+        try:
+            new_url = bs_content.find("WARNING").find("URL").text
+            new_url_p = urlparse(new_url)
+            new_query = parse_qs(new_url_p.query)
+            new_id = new_query.get("id_min")
+            new_id = new_id[0]
+            print(new_id)
+        except Exception as err:
+            new_id = None
+            LOG.debug(err)
 
         if new_id:
             params['id_min'] = new_id
         else:
             truncation = 0
 
-#    for req in get_next(session, batch_by):
-#        data = parse_output(req)
-#        write_data(data)
-#
-#def get_next(session, batch_by):
-#
-#    if batch_by == "truncation":
-#        truncation = 1
-#
-#        while truncation:
-#            #response = session.get()
-#            #content = response.content
-#            truncation = 0
-#
-##            for item in parse_data(content, 'detections'):
-##                log_data.critical(item)
-##
-##            new_id = get_truncation_id(content, 'detections')
-##
-##            if new_id:
-##                params['id_min'] = new_id
-##            else:
-##                truncation = 0
-#
-#    elif batch_by == "list":
-#        pass
+        try:
+            items = bs_content.find("RESPONSE")
+            items = items.find(re.compile("_LIST"))
+            list_name = items.name
+            items = items.find_all(recursive=False)
+        except Exception as err:
+            LOG.error(err)
+
+        out = "data/" + write_to
+        with open(out, 'a') as file:
+            for item in items:
+                item = xmltodict.parse(str(item))
+
+                if list_name == "HOST_LIST":
+
+                    host = item.get("HOST")
+
+                    tracking_method = host.get('TRACKING_METHOD')
+                    ip = host.get('IP')
+                    host_id = host.get('ID')
+                    asset_id = host.get('ASSET_ID')
+                    qg_hostid = host.get('QG_HOSTID')
+
+                    detections = host.get("DETECTION_LIST").get("DETECTION")
+                    if isinstance(detections, list):
+                        for detection in detections:
+
+                            detection['ASSET_DATA'] = dict()
+                            detection['ASSET_DATA']['TRACKING_METHOD'] = tracking_method
+                            detection['ASSET_DATA']['HOST_ID'] = host_id
+                            detection['ASSET_DATA']['ASSET_ID'] = asset_id
+                            detection['ASSET_DATA']['IP'] = ip
+                            detection['ASSET_DATA']['QG_HOSTID'] = qg_hostid
+                            file.write(json.dumps(detection))
+                            file.write("\n")
+
+                    else:
+                            detections['ASSET_DATA'] = dict()
+                            detections['ASSET_DATA']['TRACKING_METHOD'] = tracking_method
+                            detections['ASSET_DATA']['HOST_ID'] = host_id
+                            detections['ASSET_DATA']['ASSET_ID'] = asset_id
+                            detections['ASSET_DATA']['IP'] = ip
+                            detections['ASSET_DATA']['QG_HOSTID'] = qg_hostid
+                            file.write(json.dumps(detections))
+                            file.write("\n")
+                else:
+                    try:
+                        file.write(json.dumps(item))
+                        file.write("\n")
+                    except TypeError as err:
+                        LOG.error(err)

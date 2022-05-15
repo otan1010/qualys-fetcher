@@ -12,7 +12,10 @@ LOG = logging.getLogger(__name__)   #Get logger for use locally
 
 def main():
 
-    QualysFetcher().fetch("knowledgebase")
+    fetch("detection")
+    #fetch("knowledgebase")
+    #fetch("asset_group")
+    #QualysFetcher().fetch("knowledgebase")
     #got1 = QualysFetcher("detection_fixed")
     #got1 = QualysFetcher("activity_log")
 

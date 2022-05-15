@@ -9,7 +9,7 @@ from configuration import Configuration
 
 LOG = logging.getLogger(__name__)
 
-def get_session(self, endpoint):
+def get_session(endpoint):
     conf = Configuration().get_endpoint(endpoint)
 
     params = conf.get("params")

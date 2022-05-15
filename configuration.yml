@@ -2,9 +2,9 @@ logging:
   fields: "%(asctime)s %(name)s %(funcName)s %(levelname)s %(message)s"
   level: "debug"
   file_out: "app.log"
-  unit: "S"
-  count: 5
-  interval: 60
+  unit: "H"
+  count: 7
+  interval: 24
 
 request:
   domain: "https://qualysapi.qualys.eu"
@@ -34,7 +34,7 @@ endpoints:
     params: 
       static:
         action: "list"
-        truncation_limit: 40000
+        truncation_limit: 100
         show_attributes: "ALL"
 
   knowledgebase:
@@ -48,6 +48,7 @@ endpoints:
     params: 
       static:
         action: "list"
+        ids: "100027,10005,100067,100076,100089"
         details: "All"
 
   activity_log:
@@ -58,7 +59,7 @@ endpoints:
     params: 
       static:
         action: "list"
-        truncation_limit: 40000
+        truncation_limit: 4000
       dynamic:
         since_datetime:
           param_type: "timestamp"
@@ -78,7 +79,7 @@ endpoints:
             microsecond: 0
 
   detection:
-    endpoint: "/asset/host/vm/detections/"
+    endpoint: "/asset/host/vm/detection/"
     options:
       write_to: "detections.json"
       batch_by: "truncation"
@@ -86,7 +87,7 @@ endpoints:
       static:
         action: "list"
         #Truncation limit here refers to number of assets, not number of detections
-        truncation_limit: 3000
+        truncation_limit: 10
         show_asset_id: 1
         show_results: 1
         status: "Active,New,Re-Opened"
@@ -96,10 +97,10 @@ endpoints:
         arf_config_filter: 0
         arf_kernel_filter: 0
         show_reopened_info: 1
-        show_igs: 1
+        #show_igs: 1
 
   detection_fixed: 
-    endpoint: "/asset/host/vm/detections/"
+    endpoint: "/asset/host/vm/detection/"
     options:
       write_to: "detections_fixed.json"
       batch_by: "truncation"
@@ -107,7 +108,7 @@ endpoints:
       static:
         action: "list"
         #Truncation limit here refers to number of assets, not number of detections
-        truncation_limit: 3000
+        truncation_limit: 1000
         show_asset_id: 1
         show_results: 1
         status: "Fixed"
