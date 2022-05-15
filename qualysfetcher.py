@@ -30,7 +30,9 @@ def fetch(endpoint):
 
     truncation = 1
     while truncation:
+        truncation = 0
         response = session.get(url, headers=headers, params=params, auth=HTTPBasicAuth(username, password))
+        print(response.headers.get("Content-Type"))
         text = response.text
 
         bs_content = bs(text, features="xml")
