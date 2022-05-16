@@ -1,7 +1,7 @@
 import logging
 import re
 import json
-import os
+from os import replace
 
 import requests
 from requests.auth import HTTPBasicAuth
@@ -33,9 +33,10 @@ def fetch(endpoint):
     prev = out + ".prev"
 
     try:
-        os.replace(out, prev)
+        replace(out, prev)
     except Exception as err:
         print(err)
+        LOG.error(err)
 
     truncation = 1
     while truncation:
@@ -44,7 +45,7 @@ def fetch(endpoint):
         content_type = response.headers.get("Content-Type")
         text = response.text
 
-        parsed = ParseResponse(text, content_type)
+        parsed = Parser(text, content_type)
         new_id = parsed.get_new_id()
         list_name = parsed.get_list_name()
 
@@ -95,32 +96,44 @@ def fetch(endpoint):
                         LOG.error(err)
 
 
-class ParseResponse():
+class Parser():
 
     def __init__(self, content, content_type):
-        self.content = content
+        #self.content = content
         self.content_type = content_type
 
-    def get_list_name(self):
         if 'csv' in self.content_type:
-            print("CSV")
+            return None
         elif 'xml' in self.content_type:
-            bs_content = bs(self.content, features="xml")
+            bs_content = bs(content, features="xml")
 
-        items = bs_content.find("RESPONSE")
-        items = items.find(re.compile("_LIST"))
-        list_name = items.name
+            items = bs_content.find("RESPONSE")
+            items = items.find(re.compile("_LIST"))
+            self.list_name = items.name
+            self.items = items.findChildren(recursive=False)
 
-        return list_name
+            self.footer = bs_content.find("WARNING")
+
+    def get_list_name(self):
+        #if 'csv' in self.content_type:
+        #    return None
+        #elif 'xml' in self.content_type:
+        #    bs_content = bs(self.content, features="xml")
+
+        #    items = bs_content.find("RESPONSE")
+        #    items = items.find(re.compile("_LIST"))
+        #    list_name = self.items.name
+
+        return self.list_name
 
     def get_new_id(self):
         if 'csv' in self.content_type:
-            print("CSV")
+            return None
         elif 'xml' in self.content_type:
             bs_content = bs(self.content, features="xml")
 
             try:
-                new_url = bs_content.find("WARNING").find("URL").text
+                new_url = self.footer.find("URL").text
                 new_url_p = urlparse(new_url)
                 new_query = parse_qs(new_url_p.query)
                 new_id = new_query.get("id_min")
@@ -132,19 +145,18 @@ class ParseResponse():
         return new_id
 
     def get_content(self):
-        if 'csv' in self.content_type:
-            print("CSV")
-        elif 'xml' in self.content_type:
-            bs_content = bs(self.content, features="xml")
+        #if 'csv' in self.content_type:
+        #    print(self.content)
+        #elif 'xml' in self.content_type:
+        #    bs_content = bs(self.content, features="xml")
 
 #        try:
-        items = bs_content.find("RESPONSE")
-        items = items.find(re.compile("_LIST"))
-        list_name = items.name
-        items = items.findChildren(recursive=False)
-        for item in items:
-            item = xmltodict.parse(str(item))
+            #items = bs_content.find("RESPONSE")
+            #items = items.find(re.compile("_LIST"))
+            #items = items.findChildren(recursive=False)
+            for item in self.items:
+                item = xmltodict.parse(str(item))
 
-            yield item
+                yield item
 #        except Exception as err:
 #            LOG.error(err)
