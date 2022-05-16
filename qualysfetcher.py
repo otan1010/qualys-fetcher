@@ -1,6 +1,7 @@
 import logging
 import re
 import json
+import os
 
 import requests
 from requests.auth import HTTPBasicAuth
@@ -28,43 +29,32 @@ def fetch(endpoint):
     username = conf.get("credentials").get("username")
     password = conf.get("credentials").get("password")
 
+    out = "data/" + write_to
+    prev = out + ".prev"
+
+    try:
+        os.replace(out, prev)
+    except Exception as err:
+        print(err)
+
     truncation = 1
     while truncation:
-        truncation = 0
         response = session.get(url, headers=headers, params=params, auth=HTTPBasicAuth(username, password))
-        print(response.headers.get("Content-Type"))
+
+        content_type = response.headers.get("Content-Type")
         text = response.text
 
-        bs_content = bs(text, features="xml")
-
-        try:
-            new_url = bs_content.find("WARNING").find("URL").text
-            new_url_p = urlparse(new_url)
-            new_query = parse_qs(new_url_p.query)
-            new_id = new_query.get("id_min")
-            new_id = new_id[0]
-        except Exception as err:
-            new_id = None
-            LOG.debug(err)
+        parsed = ParseResponse(text, content_type)
+        new_id = parsed.get_new_id()
+        list_name = parsed.get_list_name()
 
         if new_id:
             params['id_min'] = new_id
         else:
             truncation = 0
 
-        try:
-            items = bs_content.find("RESPONSE")
-            items = items.find(re.compile("_LIST"))
-            list_name = items.name
-            items = items.find_all(recursive=False)
-        except Exception as err:
-            LOG.error(err)
-
-        out = "data/" + write_to
         with open(out, 'a') as file:
-            for item in items:
-                item = xmltodict.parse(str(item))
-
+            for item in parsed.get_content():
                 if list_name == "HOST_LIST":
 
                     host = item.get("HOST")
@@ -103,3 +93,58 @@ def fetch(endpoint):
                         file.write("\n")
                     except TypeError as err:
                         LOG.error(err)
+
+
+class ParseResponse():
+
+    def __init__(self, content, content_type):
+        self.content = content
+        self.content_type = content_type
+
+    def get_list_name(self):
+        if 'csv' in self.content_type:
+            print("CSV")
+        elif 'xml' in self.content_type:
+            bs_content = bs(self.content, features="xml")
+
+        items = bs_content.find("RESPONSE")
+        items = items.find(re.compile("_LIST"))
+        list_name = items.name
+
+        return list_name
+
+    def get_new_id(self):
+        if 'csv' in self.content_type:
+            print("CSV")
+        elif 'xml' in self.content_type:
+            bs_content = bs(self.content, features="xml")
+
+            try:
+                new_url = bs_content.find("WARNING").find("URL").text
+                new_url_p = urlparse(new_url)
+                new_query = parse_qs(new_url_p.query)
+                new_id = new_query.get("id_min")
+                new_id = new_id[0]
+            except Exception as err:
+                new_id = None
+                LOG.debug(err)
+
+        return new_id
+
+    def get_content(self):
+        if 'csv' in self.content_type:
+            print("CSV")
+        elif 'xml' in self.content_type:
+            bs_content = bs(self.content, features="xml")
+
+#        try:
+        items = bs_content.find("RESPONSE")
+        items = items.find(re.compile("_LIST"))
+        list_name = items.name
+        items = items.findChildren(recursive=False)
+        for item in items:
+            item = xmltodict.parse(str(item))
+
+            yield item
+#        except Exception as err:
+#            LOG.error(err)

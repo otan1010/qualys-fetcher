@@ -1,6 +1,7 @@
 app.log*
 credentials.yml
 data/*.json
+data/*.prev
 logs/*.log
 
 # Byte-compiled / optimized / DLL files

@@ -40,7 +40,8 @@ endpoints:
     params: 
       static:
         action: "list"
-        truncation_limit: 5000
+        truncation_limit: 100
+        #truncation_limit: 5000
         show_attributes: "ALL"
 
   knowledgebase:
@@ -66,7 +67,7 @@ endpoints:
     params: 
       static:
         action: "list"
-        truncation_limit: 5000
+        truncation_limit: 50
       dynamic:
         since_datetime:
           param_type: "timestamp"

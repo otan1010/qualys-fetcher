@@ -19,7 +19,10 @@ def main():
     for key, value in schedules.items():
         scheduler.add_job(fetch, 'cron', [key], **value)
 
-    scheduler.start()
+    #scheduler.start()
+
+    fetch("asset_group")
+    #fetch("activity_log")
 
 if __name__ == "__main__":
     main()
