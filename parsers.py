@@ -24,15 +24,6 @@ class Parser():
 
             items = items.findChildren(recursive=False)
 
-            #self.items = []
-            #for item in items:
-                #item = item.find_all()
-                #item = item.findChildren()
-                #item = xmltodict.parse(str(item))
-                #print(type(item))
-                #print("--------------")
-                
-            #self.items = [ xmltodict.parse(str(item.findChildren(recursive=False))) for item in items ]
             self.items = [ xmltodict.parse(str(item)) for item in items ]
 
             self.footer = bs_content.find("WARNING")
@@ -55,7 +46,7 @@ class Parser():
     def get_content(self):
         for item in self.items:
 
-            #Remove the root value (ASSET_GROUP, ASSET, HOST, etc.)
+            #Remove the root key (ASSET_GROUP: {}, ASSET, HOST, etc.)
             for key, value in item.items():
                 item = value
 
@@ -66,19 +57,15 @@ class Parser():
                 yield item
 
     def parse_detection(self, host):
-#        host = item.get("HOST")
-
         tracking_method = host.get('TRACKING_METHOD')
         ip = host.get('IP')
         host_id = host.get('ID')
         asset_id = host.get('ASSET_ID')
-        print(asset_id)
         qg_hostid = host.get('QG_HOSTID')
 
         detections = host.get("DETECTION_LIST").get("DETECTION")
         if isinstance(detections, list):
             for detection in detections:
-                print("detection")
 
                 detection['ASSET_DATA'] = dict()
                 detection['ASSET_DATA']['TRACKING_METHOD'] = tracking_method
@@ -90,7 +77,6 @@ class Parser():
                 yield detection
 
         else:
-                print("detections")
                 detections['ASSET_DATA'] = dict()
                 detections['ASSET_DATA']['TRACKING_METHOD'] = tracking_method
                 detections['ASSET_DATA']['HOST_ID'] = host_id
