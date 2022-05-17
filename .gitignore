@@ -3,6 +3,7 @@ credentials.yml
 data/*.json
 data/*.prev
 logs/*.log
+logs/*.log.*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

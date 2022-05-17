@@ -22,7 +22,9 @@ def main():
     #scheduler.start()
 
     #fetch("asset_group")
-    fetch("activity_log")
+    #fetch("asset")
+    fetch("detection")
+    #fetch("activity_log")
 
 if __name__ == "__main__":
     main()

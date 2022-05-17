@@ -24,7 +24,8 @@ endpoints:
     params: 
       static:
         action: "list"
-        truncation_limit: 5000
+        truncation_limit: 100
+        #truncation_limit: 5000
         show_asset_id: 1
         details: "All/AGs"
         show_tags: 1
@@ -97,7 +98,8 @@ endpoints:
     params: 
       static:
         action: "list"
-        truncation_limit: 1000 #Truncation limit here refers to number of assets, not number of detections
+        truncation_limit: 10 #Truncation limit here refers to number of assets, not number of detections
+        #truncation_limit: 1000 #Truncation limit here refers to number of assets, not number of detections
         show_asset_id: 1
         show_results: 1
         status: "Active,New,Re-Opened"
