@@ -14,6 +14,7 @@ class Parser():
 
     def __init__(self, content, content_type, endpoint):
         self.content_type = content_type
+        #print(self.content_type)
         self.endpoint = endpoint
 
         if 'csv' in self.content_type:
@@ -51,12 +52,11 @@ class Parser():
 
             self.items = csv.DictReader(io.StringIO(body))
 
-            #Seems truncation works differently with CSV output, and is also not documented anywhere (?)
-            #Skipping for now.
-            self.footer = None
-
-            #footer = next(csv.DictReader(io.StringIO(footer)))
-            #self.footer = { "WARNING": footer }
+            if footer:
+                footer = next(csv.DictReader(io.StringIO(footer)))
+                self.footer = { "WARNING": footer }
+            else:
+                self.footer = None
 
         elif 'xml' in self.content_type:
             bs_content = bs(content, features="xml")
@@ -80,10 +80,22 @@ class Parser():
     def get_new_id(self):
         if self.footer:
             url = self.footer.get("WARNING").get("URL")
+            #print(url)
             url_p = urlparse(url)
             query = parse_qs(url_p.query)
-            new_id = query.get("id_min")
-            new_id = new_id[0]
+            #print(query)
+
+            id_min = query.get("id_min")
+            id_max = query.get("id_max")
+
+            if id_min and id_max:
+                new_id = { "id_min": id_min[0], "id_max": id_max[0] }
+            elif id_max:
+                new_id = { "id_max": id_max[0] }
+            elif id_min:
+                new_id = { "id_min": id_min[0] }
+            #print(new_id)
+
         else:
             new_id = None
 

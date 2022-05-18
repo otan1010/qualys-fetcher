@@ -23,8 +23,10 @@ def main():
 
     #fetch("asset_group")
     #fetch("asset")
-    fetch("detection")
-    #fetch("activity_log")
+    #fetch("knowledgebase")
+    #fetch("detection")
+    #fetch("detection_fixed")
+    fetch("activity_log")
 
 if __name__ == "__main__":
     main()

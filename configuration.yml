@@ -24,8 +24,7 @@ endpoints:
     params: 
       static:
         action: "list"
-        truncation_limit: 100
-        #truncation_limit: 5000
+        truncation_limit: 5000
         show_asset_id: 1
         details: "All/AGs"
         show_tags: 1
@@ -42,7 +41,6 @@ endpoints:
       static:
         action: "list"
         truncation_limit: 100
-        #truncation_limit: 5000
         show_attributes: "ALL"
 
   knowledgebase:
@@ -55,6 +53,7 @@ endpoints:
       write_to: "knowledgebase.json"
     params: 
       static:
+        truncation_limit: 10000
         action: "list"
         details: "All"
 
@@ -68,7 +67,7 @@ endpoints:
     params: 
       static:
         action: "list"
-        truncation_limit: 50000
+        truncation_limit: 246
       dynamic:
         since_datetime:
           param_type: "timestamp"
@@ -98,8 +97,7 @@ endpoints:
     params: 
       static:
         action: "list"
-        truncation_limit: 20 #Truncation limit here refers to number of assets, not number of detections
-        #truncation_limit: 1000 #Truncation limit here refers to number of assets, not number of detections
+        truncation_limit: 1000 #Truncation limit here refers to number of assets, not number of detections
         show_asset_id: 1
         show_results: 1
         status: "Active,New,Re-Opened"

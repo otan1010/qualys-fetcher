@@ -9,7 +9,7 @@ from requests.packages.urllib3.util.retry import Retry
 
 from configuration import Configuration
 from parsers import Parser
-from api import get_session
+from get_session import get_session
 
 LOG = logging.getLogger(__name__)
 
@@ -34,7 +34,6 @@ def fetch(endpoint):
 
     truncation = 1
     while truncation:
-        truncation = 0
         response = session.get(url, headers=headers, params=params, auth=HTTPBasicAuth(username, password))
 
         content_type = response.headers.get("Content-Type")
@@ -44,7 +43,7 @@ def fetch(endpoint):
         new_id = parsed.get_new_id()
 
         if new_id:
-            params['id_min'] = new_id
+            params.update(new_id)
         else:
             truncation = 0
 
