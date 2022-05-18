@@ -1,5 +1,7 @@
 import logging
 import re
+import csv
+import io
 
 import xmltodict
 
@@ -15,7 +17,47 @@ class Parser():
         self.endpoint = endpoint
 
         if 'csv' in self.content_type:
-            return None
+            rows = content.splitlines()
+            body = ""
+            footer = ""
+            begin_response_body = 0
+            begin_footer = 0
+
+            for row in rows:
+
+                if row == "----BEGIN_RESPONSE_BODY_CSV":
+                    begin_response_body = 1
+                    continue
+
+                elif row == "----END_RESPONSE_BODY_CSV":
+                    begin_response_body = 0
+                    continue
+
+                elif row == "----BEGIN_RESPONSE_FOOTER_CSV":
+                    begin_footer = 1
+                    continue
+
+                elif row == "----END_RESPONSE_FOOTER_CSV":
+                    begin_footer = 0
+                    continue
+
+                elif row == "WARNING":
+                    continue
+
+                if begin_response_body:
+                    body += row + "\n"
+                elif begin_footer:
+                    footer += row + "\n"
+
+            self.items = csv.DictReader(io.StringIO(body))
+
+            #Seems truncation works differently with CSV output, and is also not documented anywhere (?)
+            #Skipping for now.
+            self.footer = None
+
+            #footer = next(csv.DictReader(io.StringIO(footer)))
+            #self.footer = { "WARNING": footer }
+
         elif 'xml' in self.content_type:
             bs_content = bs(content, features="xml")
 
@@ -24,7 +66,11 @@ class Parser():
 
             items = items.findChildren(recursive=False)
 
-            self.items = [ xmltodict.parse(str(item)) for item in items ]
+            self.items = []
+            for item in items:
+                item = xmltodict.parse(str(item))
+                for key, value in item.items():
+                    self.items.append(value)
 
             self.footer = bs_content.find("WARNING")
 
@@ -46,10 +92,6 @@ class Parser():
     def get_content(self):
         for item in self.items:
 
-            #Remove the root key (ASSET_GROUP: {}, ASSET, HOST, etc.)
-            for key, value in item.items():
-                item = value
-
             if self.endpoint == "detection":
                 for detection in self.parse_detection(item):
                     yield detection
@@ -57,31 +99,21 @@ class Parser():
                 yield item
 
     def parse_detection(self, host):
-        tracking_method = host.get('TRACKING_METHOD')
-        ip = host.get('IP')
-        host_id = host.get('ID')
-        asset_id = host.get('ASSET_ID')
-        qg_hostid = host.get('QG_HOSTID')
+        asset_data = dict(TRACKING_METHOD=host.get('TRACKING_METHOD'),
+                IP = host.get('IP'),
+                HOST_ID = host.get('ID'),
+                ASSET_ID = host.get('ASSET_ID'),
+                QG_HOSTID = host.get('QG_HOSTID'))
 
         detections = host.get("DETECTION_LIST").get("DETECTION")
         if isinstance(detections, list):
             for detection in detections:
 
-                detection['ASSET_DATA'] = dict()
-                detection['ASSET_DATA']['TRACKING_METHOD'] = tracking_method
-                detection['ASSET_DATA']['HOST_ID'] = host_id
-                detection['ASSET_DATA']['ASSET_ID'] = asset_id
-                detection['ASSET_DATA']['IP'] = ip
-                detection['ASSET_DATA']['QG_HOSTID'] = qg_hostid
-                
+                detection['ASSET_DATA'] = asset_data
+
                 yield detection
 
         else:
-                detections['ASSET_DATA'] = dict()
-                detections['ASSET_DATA']['TRACKING_METHOD'] = tracking_method
-                detections['ASSET_DATA']['HOST_ID'] = host_id
-                detections['ASSET_DATA']['ASSET_ID'] = asset_id
-                detections['ASSET_DATA']['IP'] = ip
-                detections['ASSET_DATA']['QG_HOSTID'] = qg_hostid
+                detections['ASSET_DATA'] = asset_data
 
                 yield detections

@@ -68,7 +68,7 @@ endpoints:
     params: 
       static:
         action: "list"
-        truncation_limit: 50
+        truncation_limit: 50000
       dynamic:
         since_datetime:
           param_type: "timestamp"
@@ -98,7 +98,7 @@ endpoints:
     params: 
       static:
         action: "list"
-        truncation_limit: 10 #Truncation limit here refers to number of assets, not number of detections
+        truncation_limit: 20 #Truncation limit here refers to number of assets, not number of detections
         #truncation_limit: 1000 #Truncation limit here refers to number of assets, not number of detections
         show_asset_id: 1
         show_results: 1
