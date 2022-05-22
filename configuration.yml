@@ -21,6 +21,7 @@ endpoints:
       day: "*/1"
     options:
       write_to: "assets.json"
+      item_tag: "HOST"
     params: 
       static:
         action: "list"
@@ -36,6 +37,7 @@ endpoints:
       hour: "0"
       day: "*/1"
     options:
+      item_tag: "ASSET_GROUP"
       write_to: "asset_groups.json"
     params: 
       static:
@@ -51,9 +53,10 @@ endpoints:
       day: "*/1"
     options:
       write_to: "knowledgebase.json"
+      item_tag: "VULN"
     params: 
       static:
-        truncation_limit: 10000
+        #truncation_limit: 10000
         action: "list"
         details: "All"
 
@@ -64,6 +67,7 @@ endpoints:
       hour: "*/1"
     options:
       write_to: "activity_log.json"
+      item_tag: None
     params: 
       static:
         action: "list"
@@ -94,6 +98,7 @@ endpoints:
       day: "*/1"
     options:
       write_to: "detections.json"
+      item_tag: "HOST"
     params: 
       static:
         action: "list"
@@ -117,6 +122,7 @@ endpoints:
       day: "*/1"
     options:
       write_to: "detections_fixed.json"
+      item_tag: "HOST"
     params: 
       static:
         action: "list"

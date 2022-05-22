@@ -12,21 +12,21 @@ set_logging()   #Set basic config and rotation handler
 LOG = logging.getLogger(__name__)   #Get logger for use locally
 
 def main():
-    scheduler = BlockingScheduler()
+    #scheduler = BlockingScheduler()
         
-    schedules = Configuration().get_schedules()
+    #schedules = Configuration().get_schedules()
 
-    for key, value in schedules.items():
-        scheduler.add_job(fetch, 'cron', [key], **value)
+    #for key, value in schedules.items():
+    #    scheduler.add_job(fetch, 'cron', [key], **value)
 
     #scheduler.start()
 
-    #fetch("asset_group")
-    #fetch("asset")
-    #fetch("knowledgebase")
-    #fetch("detection")
-    #fetch("detection_fixed")
-    fetch("activity_log")
+    fetch("asset_group")
+    fetch("asset")
+    fetch("knowledgebase")
+    fetch("detection")
+    fetch("detection_fixed")
+    #fetch("activity_log")
 
 if __name__ == "__main__":
     main()
