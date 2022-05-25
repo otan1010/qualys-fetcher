@@ -44,7 +44,7 @@ class Parser():
     def get_items(self):
         if 'csv' in self.content_type:
             for item in self.csv_streamparse():
-                pass
+                yield json.dumps(item)
 
         elif 'xml' in self.content_type:
             for item in self.xml_streamparse():
@@ -92,45 +92,43 @@ class Parser():
                 yield item
 
     def csv_streamparse(self):
-        data = self.content.splitlines()
-        body = ""
+        data = iter(self.content.splitlines())
         footer = ""
-        begin_response_body = 0
-        begin_footer = 0
+        in_response_body = 0
+        in_footer = 0
 
-        for row in data:
+        for item in data:
 
-            if row == "----BEGIN_RESPONSE_BODY_CSV":
-                begin_response_body = 1
+            if item == "----BEGIN_RESPONSE_BODY_CSV":
+                in_response_body = 1
+                headers = next(data)
                 continue
 
-            elif row == "----END_RESPONSE_BOo.StringIO(body)DY_CSV":
-                begin_response_body = 0
+            if item == "----END_RESPONSE_BODY_CSV":
+                in_response_body = 0
+
+            if item == "----BEGIN_RESPONSE_FOOTER_CSV":
+                in_footer = 1
+
+            if item == "----END_RESPONSE_FOOTER_CSV":
+                in_footer = 0
+
+            if in_response_body:
+                item_csv = io.StringIO(headers + '\n' + item)
+                item_dict = next(csv.DictReader(item_csv))
+                yield item_dict
+
+            if item == "WARNING":
                 continue
 
-            elif row == "----BEGIN_RESPONSE_FOOTER_CSV":
-                begin_footer = 1
-                continue
-
-            elif row == "----END_RESPONSE_FOOTER_CSV":
-                begin_footer = 0
-                continue
-
-            elif row == "WARNING":
-                continue
-
-            if begin_response_body:
-                body += row + "\n"
-            elif begin_footer:
-                footer += row + "\n"
+            if in_footer:
+                footer += item + "\n"
 
         if footer:
             footer = next(csv.DictReader(io.StringIO(footer)))
             self.footer = { "WARNING": footer }
         else:
             self.footer = None
-
-        self.items = csv.DictReader(io.StringIO(body))
 
     def parse_detection(self, host):
         asset_data = dict(TRACKING_METHOD=host.get('TRACKING_METHOD'),

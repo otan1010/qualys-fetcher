@@ -25,7 +25,7 @@ endpoints:
     params: 
       static:
         action: "list"
-        truncation_limit: 5000
+        truncation_limit: 4000
         show_asset_id: 1
         details: "All/AGs"
         show_tags: 1
@@ -42,7 +42,7 @@ endpoints:
     params: 
       static:
         action: "list"
-        truncation_limit: 100
+        truncation_limit: 4000
         show_attributes: "ALL"
 
   knowledgebase:
@@ -56,7 +56,7 @@ endpoints:
       item_tag: "VULN"
     params: 
       static:
-        #truncation_limit: 10000
+        #truncation_limit: #There is no truncation for this API for some reason?
         action: "list"
         details: "All"
 
@@ -71,7 +71,7 @@ endpoints:
     params: 
       static:
         action: "list"
-        truncation_limit: 246
+        truncation_limit: 5000
       dynamic:
         since_datetime:
           param_type: "timestamp"
@@ -102,7 +102,7 @@ endpoints:
     params: 
       static:
         action: "list"
-        truncation_limit: 1000 #Truncation limit here refers to number of assets, not number of detections
+        truncation_limit: 2000 #Truncation limit here refers to number of assets, not number of detections
         show_asset_id: 1
         show_results: 1
         status: "Active,New,Re-Opened"
@@ -112,7 +112,7 @@ endpoints:
         arf_config_filter: 0
         arf_kernel_filter: 0
         show_reopened_info: 1
-        #show_igs: 1
+        show_igs: 1
 
   detection_fixed: 
     endpoint: "/asset/host/vm/detection/"
@@ -126,7 +126,7 @@ endpoints:
     params: 
       static:
         action: "list"
-        truncation_limit: 1000 #Truncation limit here refers to number of assets, not number of detections
+        truncation_limit: 2000 #Truncation limit here refers to number of assets, not number of detections
         show_asset_id: 1
         show_results: 1
         status: "Fixed"
@@ -136,7 +136,6 @@ endpoints:
         arf_config_filter: 0
         arf_kernel_filter: 0
         show_reopened_info: 1
-        #show_igs: 1
       dynamic: 
         detection_updated_since:
           param_type: "timestamp"

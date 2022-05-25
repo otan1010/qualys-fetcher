@@ -21,12 +21,12 @@ def main():
 
     #scheduler.start()
 
-    fetch("asset_group")
-    fetch("asset")
-    fetch("knowledgebase")
-    fetch("detection")
-    fetch("detection_fixed")
-    #fetch("activity_log")
+    #fetch("asset_group")
+    #fetch("asset")
+    #fetch("knowledgebase")
+    #fetch("detection")
+    #fetch("detection_fixed")
+    fetch("activity_log")
 
 if __name__ == "__main__":
     main()
