@@ -1,17 +1,17 @@
 import logging
-import json
+#import json
 from os import replace
 
-import requests
+#import requests
 from requests.auth import HTTPBasicAuth
-from requests.adapters import HTTPAdapter
-from requests.packages.urllib3.util.retry import Retry
+#from requests.adapters import HTTPAdapter
+#from requests.packages.urllib3.util.retry import Retry
 
 from configuration import Configuration
 from parsers import Parser
 from get_session import get_session
 
-from guppy import hpy
+#from guppy import hpy
 
 LOG = logging.getLogger(__name__)
 

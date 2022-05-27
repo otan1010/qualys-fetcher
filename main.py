@@ -1,5 +1,4 @@
 import logging
-import json
 from apscheduler.schedulers.blocking import BlockingScheduler
 
 from set_logging import set_logging
@@ -12,21 +11,14 @@ set_logging()   #Set basic config and rotation handler
 LOG = logging.getLogger(__name__)   #Get logger for use locally
 
 def main():
-    #scheduler = BlockingScheduler()
-        
-    #schedules = Configuration().get_schedules()
+    scheduler = BlockingScheduler()
 
-    #for key, value in schedules.items():
-    #    scheduler.add_job(fetch, 'cron', [key], **value)
+    schedules = Configuration().get_schedules()
 
-    #scheduler.start()
+    for key, value in schedules.items():
+        scheduler.add_job(fetch, 'cron', [key], **value)
 
-    #fetch("asset_group")
-    #fetch("asset")
-    #fetch("knowledgebase")
-    #fetch("detection")
-    #fetch("detection_fixed")
-    fetch("activity_log")
+    scheduler.start()
 
 if __name__ == "__main__":
     main()

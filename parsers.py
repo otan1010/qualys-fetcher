@@ -1,13 +1,14 @@
 import logging
-import re
+#import re
 import csv
 import io
 import json
 
+from urllib.parse import urlparse, parse_qs
+
 import xmltodict
 
-from urllib.parse import urlparse,parse_qs
-from bs4 import BeautifulSoup as bs
+#from bs4 import BeautifulSoup as bs
 
 LOG = logging.getLogger(__name__)
 
@@ -30,11 +31,11 @@ class Parser():
             id_max = query.get("id_max")
 
             if id_min and id_max:
-                new_id = { "id_min": id_min[0], "id_max": id_max[0] }
+                new_id = {"id_min": id_min[0], "id_max": id_max[0]}
             elif id_max:
-                new_id = { "id_max": id_max[0] }
+                new_id = {"id_max": id_max[0]}
             elif id_min:
-                new_id = { "id_min": id_min[0] }
+                new_id = {"id_min": id_min[0]}
 
         else:
             new_id = None
@@ -74,7 +75,7 @@ class Parser():
         start = "<" + self.item_tag + ">"
         end = "</" + self.item_tag + ">"
         in_item = 0
-        in_footer = 0
+        #in_footer = 0
 
         for row in io.StringIO(self.content):
             if start in row:
@@ -126,16 +127,16 @@ class Parser():
 
         if footer:
             footer = next(csv.DictReader(io.StringIO(footer)))
-            self.footer = { "WARNING": footer }
+            self.footer = {"WARNING": footer}
         else:
             self.footer = None
 
     def parse_detection(self, host):
         asset_data = dict(TRACKING_METHOD=host.get('TRACKING_METHOD'),
-                IP = host.get('IP'),
-                HOST_ID = host.get('ID'),
-                ASSET_ID = host.get('ASSET_ID'),
-                QG_HOSTID = host.get('QG_HOSTID'))
+                          IP=host.get('IP'),
+                          HOST_ID=host.get('ID'),
+                          ASSET_ID=host.get('ASSET_ID'),
+                          QG_HOSTID=host.get('QG_HOSTID'))
 
         detections = host.get("DETECTION_LIST").get("DETECTION")
 
@@ -144,5 +145,5 @@ class Parser():
                 detection['ASSET_DATA'] = asset_data
                 yield detection
         else:
-                detections['ASSET_DATA'] = asset_data
-                yield detections
+            detections['ASSET_DATA'] = asset_data
+            yield detections
