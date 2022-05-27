@@ -1,2 +1,2 @@
-# app_template
-Application template with logging, configuration, etc.
+# qualysfetcher
+Simple app for pulling data from the Qualys cloud
