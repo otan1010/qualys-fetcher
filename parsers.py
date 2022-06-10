@@ -1,5 +1,4 @@
 import logging
-#import re
 import csv
 import io
 import json
@@ -8,18 +7,20 @@ from urllib.parse import urlparse, parse_qs
 
 import xmltodict
 
-#from bs4 import BeautifulSoup as bs
-
 LOG = logging.getLogger(__name__)
 
 class Parser():
 
     def __init__(self, content, content_type, endpoint, item_tag):
+        print("4.1: ", process.memory_info().rss / 1024 ** 2)
         self.content = content
+        del content
+        print("4.2: ", process.memory_info().rss / 1024 ** 2)
         self.content_type = content_type
         self.endpoint = endpoint
         self.item_tag = item_tag
         self.footer = self.xml_get_id()
+        print("4.3: ", process.memory_info().rss / 1024 ** 2)
 
     def get_new_id(self):
         if self.footer:
@@ -72,25 +73,28 @@ class Parser():
                 return footer
 
     def xml_streamparse(self):
+        print("5.1: ", process.memory_info().rss / 1024 ** 2)
         start = "<" + self.item_tag + ">"
         end = "</" + self.item_tag + ">"
         in_item = 0
         #in_footer = 0
 
-        for row in io.StringIO(self.content):
-            if start in row:
-                in_item = 1
-                item = ''
+        #for row in io.StringIO(self.content):
+        for row in self.content.splitlines():
+            print(row)
+        #    if start in row:
+        #        in_item = 1
+        #        item = ''
 
-            if in_item:
-                item += row
+        #    if in_item:
+        #        item += row
 
-            if end in row:
-                in_item = 0
+        #    if end in row:
+        #        in_item = 0
 
-                item = xmltodict.parse(item)
-                item = item[self.item_tag]
-                yield item
+        #        item = xmltodict.parse(item)
+        #        item = item[self.item_tag]
+        #        yield item
 
     def csv_streamparse(self):
         data = iter(self.content.splitlines())

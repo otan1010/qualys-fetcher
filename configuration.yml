@@ -13,6 +13,58 @@ request:
     X-Requested-With: "qualys-fetcher"
 
 endpoints:
+  scan_result_test:
+    endpoint: "/scan/"
+    schedule:
+      minute: "35"
+      hour: "0"
+      day: "*/1"
+    options:
+      write_to: "scan_result.json"
+      item_tag: "SCAN"
+    params: 
+      static:
+        action: "fetch"
+        scan_ref: "scan/1654002152.59767"
+        #mode: "extended"
+        #output_format: "json"
+        output_format: "json_extended"
+
+  scan:
+    endpoint: "/scan/"
+    schedule: 
+      minute: "35"
+      hour: "0"
+      day: "*/1"
+    options:
+      write_to: "scans.json"
+      item_tag: "SCAN"
+    params: 
+      static:
+        action: "list"
+        show_ags: 1
+        show_op: 1
+        show_status: 1
+      dynamic: 
+        launched_after_datetime:
+          param_type: "timestamp"
+          format: "%Y-%m-%dT%H:%M:%SZ"
+          subtract:
+            days: 1
+          replace:
+            hour: 0
+            minute: 0
+            second: 0
+            microsecond: 0
+        launched_before_datetime:
+          param_type: "timestamp"
+          format: "%Y-%m-%dT%H:%M:%SZ"
+          replace:
+            hour: 0
+            minute: 0
+            second: 0
+            microsecond: 0
+
   asset:
     endpoint: "/asset/host/"
     schedule:
@@ -42,7 +94,8 @@ endpoints:
     params: 
       static:
         action: "list"
-        truncation_limit: 4000
+        truncation_limit: 100
+        #truncation_limit: 4000
         show_attributes: "ALL"
 
   knowledgebase:
@@ -102,7 +155,7 @@ endpoints:
     params: 
       static:
         action: "list"
-        truncation_limit: 2000 #Truncation limit here refers to number of assets, not number of detections
+        truncation_limit: 5000 #Truncation limit here refers to number of assets, not number of detections
         show_asset_id: 1
         show_results: 1
         status: "Active,New,Re-Opened"
