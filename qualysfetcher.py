@@ -34,14 +34,8 @@ def fetch(endpoint):
     except Exception as err:
         LOG.debug(err)
 
-    item_count = 0
-    yield_count = 0
     truncation = 1
     while truncation:
-        truncation = 0
-
-        now = datetime.datetime.now()
-        print(now)
         LOG.info(params)
 
         with session.get(url, headers=headers, params=params, auth=HTTPBasicAuth(username, password), stream=True) as r:
@@ -73,10 +67,8 @@ def fetch(endpoint):
                         item = xmltodict.parse(item)
                         item = item[item_tag]
 
-                        item_count += 1
                         for i in get_endpoint_items(endpoint, item):
                             f.write(json.dumps(i) + "\n")
-                            yield_count += 1
 
                     if "<WARNING>" in row:
                         footer = ''
@@ -111,12 +103,6 @@ def fetch(endpoint):
                 params.update(new_id)
             else:
                 truncation = 0
-
-            now = datetime.datetime.now()
-            print(now)
-
-    print(item_count)
-    print(yield_count)
 
 def get_endpoint_items(endpoint, item):
     if "detection" in endpoint:                        

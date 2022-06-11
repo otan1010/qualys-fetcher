@@ -13,27 +13,40 @@ request:
     X-Requested-With: "qualys-fetcher"
 
 endpoints:
-  scan_result_test:
-    endpoint: "/scan/"
-    schedule:
-      minute: "35"
-      hour: "0"
-      day: "*/1"
-    options:
-      write_to: "scan_result.json"
-      item_tag: "SCAN"
-    params: 
-      static:
-        action: "fetch"
-        scan_ref: "scan/1654002152.59767"
-        #mode: "extended"
-        #output_format: "json"
-        output_format: "json_extended"
+#  activity_log:
+#    endpoint: "/activity_log/"
+#    schedule:
+#      minute: "1"
+#      hour: "*/1"
+#    options:
+#      write_to: "activity_log.json"
+#      item_tag: None
+#    params: 
+#      static:
+#        action: "list"
+#        truncation_limit: 5000
+#      dynamic:
+#        since_datetime:
+#          param_type: "timestamp"
+#          format: "%Y-%m-%dT%H:%M:%SZ"
+#          subtract:
+#            hours: 1
+#          replace:
+#            minute: 0
+#            second: 0
+#            microsecond: 0
+#        until_datetime:
+#          param_type: "timestamp"
+#          format: "%Y-%m-%dT%H:%M:%SZ"
+#          replace:
+#            minute: 0
+#            second: 0
+#            microsecond: 0
 
   scan:
     endpoint: "/scan/"
     schedule: 
-      minute: "35"
+      minute: "5"
       hour: "0"
       day: "*/1"
     options:
@@ -68,7 +81,7 @@ endpoints:
   asset:
     endpoint: "/asset/host/"
     schedule:
-      minute: "35"
+      minute: "10"
       hour: "0"
       day: "*/1"
     options:
@@ -77,7 +90,7 @@ endpoints:
     params: 
       static:
         action: "list"
-        truncation_limit: 4000
+        truncation_limit: 6000
         show_asset_id: 1
         details: "All/AGs"
         show_tags: 1
@@ -97,79 +110,10 @@ endpoints:
         truncation_limit: 4000
         show_attributes: "ALL"
 
-  knowledgebase:
-    endpoint: "/knowledge_base/vuln/"
-    schedule:
-      minute: "40"
-      hour: "0"
-      day: "*/1"
-    options:
-      write_to: "knowledgebase.json"
-      item_tag: "VULN"
-    params: 
-      static:
-        #truncation_limit: #There is no truncation for this API for some reason?
-        action: "list"
-        details: "All"
-
-  activity_log:
-    endpoint: "/activity_log/"
-    schedule:
-      minute: "1"
-      hour: "*/1"
-    options:
-      write_to: "activity_log.json"
-      item_tag: None
-    params: 
-      static:
-        action: "list"
-        truncation_limit: 5000
-      dynamic:
-        since_datetime:
-          param_type: "timestamp"
-          format: "%Y-%m-%dT%H:%M:%SZ"
-          subtract:
-            hours: 1
-          replace:
-            minute: 0
-            second: 0
-            microsecond: 0
-        until_datetime:
-          param_type: "timestamp"
-          format: "%Y-%m-%dT%H:%M:%SZ"
-          replace:
-            minute: 0
-            second: 0
-            microsecond: 0
-
-  detection:
-    endpoint: "/asset/host/vm/detection/"
-    schedule:
-      minute: "5"
-      hour: "0"
-      day: "*/1"
-    options:
-      write_to: "detections.json"
-      item_tag: "HOST"
-    params: 
-      static:
-        action: "list"
-        truncation_limit: 300 #Truncation limit here refers to number of assets, not number of detections
-        show_asset_id: 1
-        show_results: 1
-        status: "Active,New,Re-Opened"
-        include_ignored: 1
-        include_disabled: 1
-        arf_service_filter: 0
-        arf_config_filter: 0
-        arf_kernel_filter: 0
-        show_reopened_info: 1
-        show_igs: 1
-
   detection_fixed: 
     endpoint: "/asset/host/vm/detection/"
     schedule:
-      minute: "1"
+      minute: "40"
       hour: "0"
       day: "*/1"
     options:
@@ -207,3 +151,42 @@ endpoints:
             minute: 0
             second: 0
             microsecond: 0
+
+  knowledgebase:
+    endpoint: "/knowledge_base/vuln/"
+    schedule:
+      minute: "5"
+      hour: "1"
+      day: "*/1"
+    options:
+      write_to: "knowledgebase.json"
+      item_tag: "VULN"
+    params: 
+      static:
+        #truncation_limit: #There is no truncation for this API for some reason?
+        action: "list"
+        details: "All"
+
+  detection:
+    endpoint: "/asset/host/vm/detection/"
+    schedule:
+      minute: "5"
+      hour: "2"
+      day: "*/1"
+    options:
+      write_to: "detections.json"
+      item_tag: "HOST"
+    params: 
+      static:
+        action: "list"
+        truncation_limit: 300 #Truncation limit here refers to number of assets, not number of detections
+        show_asset_id: 1
+        show_results: 1
+        status: "Active,New,Re-Opened"
+        include_ignored: 1
+        include_disabled: 1
+        arf_service_filter: 0
+        arf_config_filter: 0
+        arf_kernel_filter: 0
+        show_reopened_info: 1
+        show_igs: 1
