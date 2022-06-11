@@ -25,8 +25,8 @@ def main():
     #fetch("asset_group")
     #fetch("asset")
     #fetch("knowledgebase")
-    fetch("detection")
     #fetch("detection_fixed")
+    fetch("detection")
     #fetch("activity_log")
 
 

@@ -34,9 +34,12 @@ def fetch(endpoint):
     except Exception as err:
         LOG.debug(err)
 
+    item_count = 0
+    yield_count = 0
     truncation = 1
     while truncation:
-        #truncation = 0
+        truncation = 0
+
         now = datetime.datetime.now()
         print(now)
         LOG.info(params)
@@ -69,7 +72,11 @@ def fetch(endpoint):
 
                         item = xmltodict.parse(item)
                         item = item[item_tag]
-                        f.write(json.dumps(item) + "\n")
+
+                        item_count += 1
+                        for i in get_endpoint_items(endpoint, item):
+                            f.write(json.dumps(i) + "\n")
+                            yield_count += 1
 
                     if "<WARNING>" in row:
                         footer = ''
@@ -82,9 +89,9 @@ def fetch(endpoint):
                         in_footer = 0
 
             if footer:
-                LOG.info(footer)
                 footer = xmltodict.parse(footer)
                 footer = footer["WARNING"]
+                LOG.info(footer)
 
                 url = footer.get("URL")
                 url_p = urlparse(url)
@@ -107,3 +114,40 @@ def fetch(endpoint):
 
             now = datetime.datetime.now()
             print(now)
+
+    print(item_count)
+    print(yield_count)
+
+def get_endpoint_items(endpoint, item):
+    if "detection" in endpoint:                        
+        asset_data = dict(TRACKING_METHOD=item.get('TRACKING_METHOD'),
+                          IP=item.get('IP'),
+                          HOST_ID=item.get('ID'),
+                          ASSET_ID=item.get('ASSET_ID'),
+                          QG_HOSTID=item.get('QG_HOSTID'))
+
+        detections = item.get("DETECTION_LIST").get("DETECTION")
+
+        if isinstance(detections, list):
+            for det in detections:
+                RES = det.get('RESULTS')
+                if RES:
+                    det['RESULTS'] = (RES[:10000] + ' ... [TRUNCATED]') if len(RES) > 10000 else RES
+
+                det['ASSET_DATA'] = asset_data
+                yield det
+        else:
+            RES = detections.get('RESULTS')
+            if RES:
+                detections['RESULTS'] = (RES[:10000] + ' ... [TRUNCATED]') if len(RES) > 10000 else RES
+
+            detections['ASSET_DATA'] = asset_data
+            yield detections
+
+    elif "knowledgebase" in endpoint:
+        DIAG = item.get('DIAGNOSIS')
+        item['DIAGNOSIS'] = (DIAG[:10000] + ' ... [TRUNCATED]') if len(DIAG) > 10000 else DIAG
+        yield item
+
+    else:
+        yield item
