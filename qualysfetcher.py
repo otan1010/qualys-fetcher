@@ -38,71 +38,67 @@ def fetch(endpoint):
     while truncation:
         LOG.info(params)
 
-        with session.get(url, headers=headers, params=params, auth=HTTPBasicAuth(username, password), stream=True) as r:
-            LOG.info(r)
-            LOG.info(r.headers)
+        r = session.get(url, headers=headers, params=params, auth=HTTPBasicAuth(username, password), stream=True)
 
-            with open(out, 'a') as f:
+        LOG.info(r)
+        LOG.info(r.headers)
 
-                start = "<" + item_tag + ">"
-                end = "</" + item_tag + ">"
-                in_item = 0
-                in_footer = 0
-                footer = None
-                new_id = None
+        with open(out, 'a') as f:
 
-                for row in r.iter_lines():
-                    row = row.decode("utf-8")
+            start = "<" + item_tag + ">"
+            end = "</" + item_tag + ">"
+            in_item = 0
+            in_footer = 0
+            footer = None
+            new_id = None
 
-                    if start in row:
-                        in_item = 1
-                        item = ''
+            for row in r.iter_lines():
+                row = row.decode("utf-8")
 
-                    if in_item:
-                        item += row
+                if start in row:
+                    in_item = 1
+                    item = ''
 
-                    if end in row:
-                        in_item = 0
+                if in_item:
+                    item += row
 
-                        item = xmltodict.parse(item)
-                        item = item[item_tag]
+                if end in row:
+                    in_item = 0
 
-                        for i in get_endpoint_items(endpoint, item):
-                            f.write(json.dumps(i) + "\n")
+                    item = xmltodict.parse(item)
+                    item = item[item_tag]
 
-                    if "<WARNING>" in row:
-                        footer = ''
-                        in_footer = 1
+                    for i in get_endpoint_items(endpoint, item):
+                        f.write(json.dumps(i) + "\n")
 
-                    if in_footer:
-                        footer += row
+                if "<WARNING>" in row:
+                    footer = ''
+                    in_footer = 1
 
-                    if "</WARNING>" in row:
-                        in_footer = 0
+                if in_footer:
+                    footer += row
 
-            if footer:
-                footer = xmltodict.parse(footer)
-                footer = footer["WARNING"]
-                LOG.info(footer)
+                if "</WARNING>" in row:
+                    in_footer = 0
 
-                url = footer.get("URL")
-                url_p = urlparse(url)
-                query = parse_qs(url_p.query)
+        if footer:
+            footer = xmltodict.parse(footer)
+            footer = footer["WARNING"]
+            LOG.info(footer)
 
-                id_min = query.get("id_min")
-                id_max = query.get("id_max")
+            f_url = footer.get("URL")
+            url_p = urlparse(f_url)
+            f_query = parse_qs(url_p.query)
 
-                if id_min and id_max:
-                    new_id = {"id_min": id_min[0], "id_max": id_max[0]}
-                elif id_max:
-                    new_id = {"id_max": id_max[0]}
-                elif id_min:
-                    new_id = {"id_min": id_min[0]}
+            id_min = f_query.get("id_min")
 
-            if new_id:
-                params.update(new_id)
-            else:
-                truncation = 0
+            if id_min:
+                new_id = {"id_min": id_min[0]}
+
+        if new_id:
+            params.update(new_id)
+        else:
+            truncation = 0
 
 def get_endpoint_items(endpoint, item):
     if "detection" in endpoint:                        
@@ -118,21 +114,21 @@ def get_endpoint_items(endpoint, item):
             for det in detections:
                 RES = det.get('RESULTS')
                 if RES:
-                    det['RESULTS'] = (RES[:10000] + ' ... [TRUNCATED]') if len(RES) > 10000 else RES
+                    det['RESULTS'] = (RES[:2000] + ' ... [TRUNCATED]') if len(RES) > 2000 else RES
 
                 det['ASSET_DATA'] = asset_data
                 yield det
         else:
             RES = detections.get('RESULTS')
             if RES:
-                detections['RESULTS'] = (RES[:10000] + ' ... [TRUNCATED]') if len(RES) > 10000 else RES
+                detections['RESULTS'] = (RES[:2000] + ' ... [TRUNCATED]') if len(RES) > 2000 else RES
 
             detections['ASSET_DATA'] = asset_data
             yield detections
 
     elif "knowledgebase" in endpoint:
         DIAG = item.get('DIAGNOSIS')
-        item['DIAGNOSIS'] = (DIAG[:10000] + ' ... [TRUNCATED]') if len(DIAG) > 10000 else DIAG
+        item['DIAGNOSIS'] = (DIAG[:2000] + ' ... [TRUNCATED]') if len(DIAG) > 2000 else DIAG
         yield item
 
     else:
