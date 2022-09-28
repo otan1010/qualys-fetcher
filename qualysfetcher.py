@@ -128,7 +128,13 @@ def get_endpoint_items(endpoint, item):
 
     elif "knowledgebase" in endpoint:
         DIAG = item.get('DIAGNOSIS')
-        item['DIAGNOSIS'] = (DIAG[:2000] + ' ... [TRUNCATED]') if len(DIAG) > 2000 else DIAG
+        if DIAG:
+            item['DIAGNOSIS'] = (DIAG[:5000] + ' ... [TRUNCATED]') if len(DIAG) > 5000 else DIAG
+
+        SOLU = item.get('SOLUTION')
+        if SOLU:
+            item['SOLUTION'] = (SOLU[:5000] + ' ... [TRUNCATED]') if len(SOLU) > 5000 else SOLU
+
         yield item
 
     else:

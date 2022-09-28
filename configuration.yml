@@ -17,7 +17,7 @@ endpoints:
     endpoint: "/scan/"
     schedule: 
       minute: "5"
-      hour: "13"
+      hour: "0"
       day: "*/1"
     options:
       write_to: "scans.json"
@@ -52,7 +52,7 @@ endpoints:
     endpoint: "/asset/host/"
     schedule:
       minute: "10"
-      hour: "13"
+      hour: "0"
       day: "*/1"
     options:
       write_to: "assets.json"
@@ -69,7 +69,7 @@ endpoints:
     endpoint: "/asset/group/"
     schedule:
       minute: "30"
-      hour: "13"
+      hour: "0"
       day: "*/1"
     options:
       item_tag: "ASSET_GROUP"
@@ -84,7 +84,7 @@ endpoints:
     endpoint: "/asset/host/vm/detection/"
     schedule:
       minute: "40"
-      hour: "13"
+      hour: "0"
       day: "*/1"
     options:
       write_to: "detections_fixed.json"
@@ -126,7 +126,7 @@ endpoints:
     endpoint: "/knowledge_base/vuln/"
     schedule:
       minute: "5"
-      hour: "14"
+      hour: "1"
       day: "*/1"
     options:
       write_to: "knowledgebase.json"
@@ -141,7 +141,7 @@ endpoints:
     endpoint: "/asset/host/vm/detection/"
     schedule:
       minute: "5"
-      hour: "15"
+      hour: "2"
       day: "*/1"
     options:
       write_to: "detections.json"
